@@ -1,6 +1,7 @@
 # HumanResourcesDepartment
 
 Для запуска проекта используйте эти команды (из корневой папки проекта):
+<br>
 Если не установлен pipenv:
 <br>
 `pip3 install pipenv`

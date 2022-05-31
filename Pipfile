@@ -8,6 +8,7 @@ django = "*"
 django-import-export = "*"
 django-admin-rangefilter = "*"
 django-grappelli = "*"
+python-docx = "*"
 
 [dev-packages]
 

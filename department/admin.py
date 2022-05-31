@@ -1,11 +1,13 @@
 from django.contrib import admin
 from .models import *
+from import_export.admin import ExportActionMixin
+from department.doc import create_doc
 
 # Register your models here.
 
 
 @admin.register(Employee)
-class FilterEmployee(admin.ModelAdmin):
+class FilterEmployee(ExportActionMixin, admin.ModelAdmin):
 
     list_display = (
         "id",
@@ -24,7 +26,7 @@ class FilterEmployee(admin.ModelAdmin):
 
 
 @admin.register(Contract)
-class FilterContract(admin.ModelAdmin):
+class FilterContract(ExportActionMixin, admin.ModelAdmin):
     list_display = (
         "payment",
         "type",
@@ -40,7 +42,7 @@ class FilterContract(admin.ModelAdmin):
 
 
 @ admin.register(EmpBook)
-class FilterEmpBook(admin.ModelAdmin):
+class FilterEmpBook(ExportActionMixin, admin.ModelAdmin):
     list_display = (
         "give_date",
         "position",
@@ -58,7 +60,7 @@ class FilterEmpBook(admin.ModelAdmin):
 
 
 @ admin.register(Education)
-class FilterEducation(admin.ModelAdmin):
+class FilterEducation(ExportActionMixin, admin.ModelAdmin):
     list_display = (
         "nameIns",
         "nameDoc",
@@ -80,7 +82,7 @@ class FilterEducation(admin.ModelAdmin):
 
 
 @ admin.register(EmpFamily)
-class FilterEmpFamily(admin.ModelAdmin):
+class FilterEmpFamily(ExportActionMixin, admin.ModelAdmin):
     list_display = (
         "marStatus",
         "maidenName",
@@ -92,7 +94,7 @@ class FilterEmpFamily(admin.ModelAdmin):
 
 
 @ admin.register(FamilyComposition)
-class FilterFamilyComposition(admin.ModelAdmin):
+class FilterFamilyComposition(ExportActionMixin, admin.ModelAdmin):
     list_display = (
         "id",
         "firstName",
@@ -110,7 +112,7 @@ class FilterFamilyComposition(admin.ModelAdmin):
 
 
 @ admin.register(Passport)
-class FilterPassport(admin.ModelAdmin):
+class FilterPassport(ExportActionMixin, admin.ModelAdmin):
     list_display = (
         "series",
         "number",
@@ -131,8 +133,19 @@ class FilterPassport(admin.ModelAdmin):
     )
 
 
+@admin.action(description='Сформировать личное дело')
+def create_personal_file(modeladmin, request, queryset):
+    for el in queryset:
+        create_doc(el.id, el.employee, el.ITN, el.insPolicy, el.snils,
+                   el.phoneNum, el.bornDate, el.sex,
+                   el.fact_living_place, el.family,
+                   el.passport, el.education, el.contract, el.empBook)
+
+
 @ admin.register(PersonalFile)
-class FilterPersonalFile(admin.ModelAdmin):
+class FilterPersonalFile(ExportActionMixin, admin.ModelAdmin):
+    actions = [create_personal_file]
+
     list_display = (
         "employee",
         "ITN",

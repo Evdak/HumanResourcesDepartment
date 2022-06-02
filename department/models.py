@@ -183,7 +183,7 @@ class Contract(models.Model):
         'Дата начала действия договора'
     )
     end_date = models.DateField(
-        'Дата начала действия договора',
+        'Дата конца действия договора',
         blank=True,
         null=True
     )
@@ -306,6 +306,20 @@ class Education(models.Model):
         verbose_name_plural = "Документы об образовании"
 
 
+class Order(models.Model):
+    type = models.CharField("Вид приказа", max_length=250)
+    file = models.FileField(upload_to='documents/')
+    status = models.CharField("Статус", max_length=50,
+                              default='На рассмотрении', editable=False)
+
+    def __str__(self):
+        return f"{self.id}, {self.type}"
+
+    class Meta:
+        verbose_name = "Приказ"
+        verbose_name_plural = "Приказы"
+
+
 class PersonalFile(models.Model):
     employee = models.OneToOneField(
         Employee,
@@ -391,6 +405,11 @@ class PersonalFile(models.Model):
         EmpBook,
         on_delete=models.CASCADE,
         verbose_name='Трудовая книжка'
+    )
+
+    orders = models.ManyToManyField(
+        Order,
+        verbose_name='Приказы'
     )
 
     class Meta:
